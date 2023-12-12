@@ -1,0 +1,29 @@
+version: '2.0'
+services:
+  db:
+    container_name: mongodb
+    image: mongo
+    restart: always
+    ports:
+      - '27017:27017'
+    volumes:
+      - type: volume
+        source: db-data
+        target: /data/db
+    networks:
+      - 5ire-Oracle-Service
+  oracle-service:
+    build:
+      context: .
+    ports:
+      - '8000:8000'
+    restart: always
+    container_name: 5ire-Oracle-Service
+    environment:
+      DB_HOST: mongodb:27017
+    networks:
+      - 5ire-Oracle-Service
+volumes:
+  db-data:
+networks:
+  5ire-Oracle-Service:
