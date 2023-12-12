@@ -1,18 +1,19 @@
 package main
 
 import (
+	"boilerplate/database"
+	"boilerplate/router"
 	"context"
 	"database/sql"
 	"log"
-	"boilerplate/database"
-	"github.com/robfig/cron"
-	"boilerplate/router"
 
 	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/robfig/cron"
 )
+
 func main() {
 	database.ConnectDb()
-  router.Fetched()
+	router.Fetched()
 	// Initialize Ethereum client
 	client, err := rpc.Dial("https://rpc-alpha-testnet.saitascan.io")
 	if err != nil {
@@ -68,9 +69,9 @@ func main() {
 
 		log.Printf("Successfully fetched and stored block details for block number %s", latestBlockNum)
 	})
-
 	cronJob.Start()
-	defer cronJob.Stop()
+	router.ClientRoutes()
+	// defer cronJob.Stop()
 
 	// Keep the main program running
 	select {}
