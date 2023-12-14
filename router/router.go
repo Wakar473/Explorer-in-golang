@@ -5,8 +5,8 @@
 package router
 
 import (
-	"database/sql"
-	"encoding/json"
+	// "database/sql"
+	// "encoding/json"
 	"log"
 	"net/http"
 
@@ -15,7 +15,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var db *sql.DB
+// var db *sql.DB
 
 type Route struct {
 	Name        string
@@ -24,14 +24,14 @@ type Route struct {
 	HandlerFunc func(*gin.Context)
 }
 
-type BlockDetails struct {
-	Number       string `json:"number"`
-	ParentHash   string `json:"parentHash"`
-	BlockHash    string `json:"hash"`
-	Timestamp    string `json:"timestamp"`
-	Transactions int    `json:"transactions"`
-	HandlerFunc  func(*gin.Context)
-}
+// type BlockDetails struct {
+// 	Number       string `json:"number"`
+// 	ParentHash   string `json:"parentHash"`
+// 	BlockHash    string `json:"hash"`
+// 	Timestamp    string `json:"timestamp"`
+// 	Transactions int    `json:"transactions"`
+// 	HandlerFunc  func(*gin.Context)
+// }
 type routes struct {
 	router *gin.Engine
 }
@@ -58,39 +58,39 @@ orderRouteGrouping := rg.Group("/esg"): This line creates a new router group wit
 orderRouteGrouping.Use(CORSMiddleware()): This line applies the CORSMiddleware function to the newly created /esg group. This middleware is likely responsible for handling Cross-Origin Resource Sharing (CORS) requests and ensuring that the API endpoints are accessible from different origins.
 */
 func Fetched() {
-	r := gin.Default()
+	// r := gin.Default()
 
-	r.GET("/blockDetails", func(c *gin.Context) {
-		var blocks []BlockDetails
+	// r.GET("/blockDetails", func(c *gin.Context) {
+	// 	var blocks []BlockDetails
 
-		rows, err := db.Query("SELECT block_number, parent_hash, block_hash, timestamp, transaction_count FROM block_details ORDER BY block_number DESC LIMIT 10")
-		if err != nil {
-			log.Printf("Failed to query the database: %v", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to query the database"})
-			return
-		}
-		defer rows.Close()
+	// 	rows, err := db.Query("SELECT block_number, parent_hash, block_hash, timestamp, transaction_count FROM block_details ORDER BY block_number DESC LIMIT 10")
+	// 	if err != nil {
+	// 		log.Printf("Failed to query the database: %v", err)
+	// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to query the database"})
+	// 		return
+	// 	}
+	// 	defer rows.Close()
 
-		for rows.Next() {
-			var block BlockDetails
-			err := rows.Scan(&block.Number, &block.ParentHash, &block.BlockHash, &block.Timestamp, &block.Transactions)
-			if err != nil {
-				log.Printf("Failed to scan row: %v", err)
-				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve block details"})
-				return
-			}
-			blocks = append(blocks, block)
-		}
+	// 	for rows.Next() {
+	// 		var block BlockDetails
+	// 		err := rows.Scan(&block.Number, &block.ParentHash, &block.BlockHash, &block.Timestamp, &block.Transactions)
+	// 		if err != nil {
+	// 			log.Printf("Failed to scan row: %v", err)
+	// 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve block details"})
+	// 			return
+	// 		}
+	// 		blocks = append(blocks, block)
+	// 	}
 
-		jsonData, err := json.Marshal(blocks)
-		if err != nil {
-			log.Printf("Failed to marshal block details to JSON: %v", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to marshal block details to JSON"})
-			return
-		}
+	// 	jsonData, err := json.Marshal(blocks)
+	// 	if err != nil {
+	// 		log.Printf("Failed to marshal block details to JSON: %v", err)
+	// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to marshal block details to JSON"})
+	// 		return
+	// 	}
 
-		c.JSON(http.StatusOK, string(jsonData))
-	})
+	// 	c.JSON(http.StatusOK, string(jsonData))
+	// })
 }
 func (r routes) ESGHealthGrouping(rg *gin.RouterGroup) {
 

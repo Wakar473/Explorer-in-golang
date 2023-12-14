@@ -3,14 +3,15 @@ package controller
 import (
 	"boilerplate/database"
 	"database/sql"
-	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
-var db *sql.DB
+// var db *sql.DB
 
 type BlockDetails struct {
 	Number       string `json:"number"`
@@ -27,45 +28,40 @@ func HealthCheck(c *gin.Context) {
 
 func FetchBlocks(c *gin.Context) {
 	var blocks []BlockDetails
-	println("here1")
 	database.ConnectDb()
-	println("here2", db)
 
 	db, _ := sql.Open("mysql", "root:@tcp(localhost:3306)/saita")
-	println("here2", db)
-	rows, err := db.Query("SELECT block_number, parent_hash, block_hash, timestamp, transaction_count FROM block_details limit 10")
+	rows, err := db.Query("SELECT block_number, parent_hash, block_hash, timestamp, transaction_count FROM block_details ORDER BY block_number DESC LIMIT 10")
 	if err != nil {
-		println("here2")
-
 		log.Printf("Failed to query the database: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to query the database"})
 		return
 	}
-	// println("rows===============> ", rows)
-
 	defer rows.Close()
-	println("here4")
 
 	for rows.Next() {
 		var block BlockDetails
-		err := rows.Scan(&block.Number, &block.ParentHash, &block.BlockHash, &block.Timestamp, &block.Transactions)
+		var blockNumberHex string // Assuming block_number is stored in hexadecimal format
+
+		err := rows.Scan(&blockNumberHex, &block.ParentHash, &block.BlockHash, &block.Timestamp, &block.Transactions)
 		if err != nil {
 			log.Printf("Failed to scan row: %v", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve block details"})
 			return
 		}
-		// log.Printf("block ==============> ", block)
+
+		// Convert hexadecimal block number to uint64
+		blockNumber, err := strconv.ParseUint(strings.TrimPrefix(blockNumberHex, "0x"), 16, 64)
+		if err != nil {
+			log.Printf("Failed to convert block number: %v", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to convert block number"})
+			return
+		}
+
+		// Assign the converted block number to the BlockDetails struct
+		block.Number = strconv.FormatUint(blockNumber, 10) // Store as string if needed
 		blocks = append(blocks, block)
 	}
-	println("blocks ===========>", blocks)
 
-	jsonData, err := json.Marshal(blocks)
-	if err != nil {
-		log.Printf("Failed to marshal block details to JSON: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to marshal block details to JSON"})
-		return
-	}
-	println("here6")
-
-	c.JSON(http.StatusOK, string(jsonData))
+	c.JSON(http.StatusOK, blocks)
 }

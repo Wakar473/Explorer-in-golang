@@ -1,6 +1,7 @@
 package main
 
 import (
+	"boilerplate/controller"
 	"boilerplate/database"
 	"boilerplate/router"
 	"context"
@@ -13,7 +14,7 @@ import (
 
 func main() {
 	database.ConnectDb()
-	router.Fetched()
+	// router.Fetched()
 	// Initialize Ethereum client
 	client, err := rpc.Dial("https://rpc-alpha-testnet.saitascan.io")
 	if err != nil {
@@ -45,7 +46,7 @@ func main() {
 			return
 		}
 
-		blockDetails := &router.BlockDetails{
+		blockDetails := &controller.BlockDetails{
 			Number:       block["number"].(string),
 			ParentHash:   block["parentHash"].(string),
 			BlockHash:    block["hash"].(string),
