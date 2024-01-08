@@ -1,6 +1,8 @@
 package constant
 
 const (
+	// APIVersion = "v1"
+
 	APIVersion = "v2"
 	APIGroup   = "esg"
 
@@ -8,4 +10,5 @@ const (
 
 	// schedular constants
 	GetLatestBlock = "/latestBlock"
+	GetLatestTransaction = "/latestTransaction"
 )

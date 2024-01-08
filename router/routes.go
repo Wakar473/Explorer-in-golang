@@ -23,5 +23,7 @@ import (
 var GetBlockDetailsFromDb = Routes{
 	Route{"Get Block Details", http.MethodGet, constant.GetLatestBlock, controller.FetchBlocks},
 }
-
+ var GetTransactionDetailsFromDb = Routes {
+	Route{"Get Transaction Details",http.MethodGet,constant.GetLatestTransaction, controller.FetchTransactionDetails},
+ }
 // "Health check", http.MethodGet, constant.HealthCheckRoute, controller.HealthCheck,},

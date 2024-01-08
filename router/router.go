@@ -24,14 +24,14 @@ type Route struct {
 	HandlerFunc func(*gin.Context)
 }
 
-// type BlockDetails struct {
-// 	Number       string `json:"number"`
-// 	ParentHash   string `json:"parentHash"`
-// 	BlockHash    string `json:"hash"`
-// 	Timestamp    string `json:"timestamp"`
-// 	Transactions int    `json:"transactions"`
-// 	HandlerFunc  func(*gin.Context)
-// }
+//	type BlockDetails struct {
+//		Number       string `json:"number"`
+//		ParentHash   string `json:"parentHash"`
+//		BlockHash    string `json:"hash"`
+//		Timestamp    string `json:"timestamp"`
+//		Transactions int    `json:"transactions"`
+//		HandlerFunc  func(*gin.Context)
+//	}
 type routes struct {
 	router *gin.Engine
 }
@@ -118,6 +118,29 @@ func (r routes) ESGHealthGrouping(rg *gin.RouterGroup) {
 	// }
 
 	for _, route := range GetBlockDetailsFromDb {
+		switch route.Method {
+		case "GET":
+			orderRouteGrouping.GET(route.Pattern, route.HandlerFunc)
+		case "POST":
+			orderRouteGrouping.POST(route.Pattern, route.HandlerFunc)
+		case "OPTIONS":
+			orderRouteGrouping.OPTIONS(route.Pattern, route.HandlerFunc)
+		case "PUT":
+			orderRouteGrouping.PUT(route.Pattern, route.HandlerFunc)
+		case "DELETE":
+			orderRouteGrouping.DELETE(route.Pattern, route.HandlerFunc)
+		default:
+			orderRouteGrouping.GET(route.Pattern, func(c *gin.Context) {
+				c.JSON(200, gin.H{
+					"result": "Specify a valid http method with this route.",
+				})
+			})
+		}
+	}
+
+
+
+	for _, route := range GetTransactionDetailsFromDb {
 		switch route.Method {
 		case "GET":
 			orderRouteGrouping.GET(route.Pattern, route.HandlerFunc)

@@ -22,6 +22,22 @@ type BlockDetails struct {
 	// HandlerFunc  func(*gin.Context)
 }
 
+type TransactionDetails struct {
+	BlockHash  string `json:"blockHash"`
+	BlockNumber  string `json:"numberHash"`
+	ChainId  string `json:"Id"`
+    From string `json:"from"`
+    Gas  string `json:"gas"`
+	GasPrice  string `json:"gasPrice"`
+	Hash  string `json:"hash"`
+	MaxFeePerGas string `json:"maxFeeHash"`
+	MaxPriorityFeePerGas string `json:"priorityHash"`
+	Nonce  string `json:"nonce"`
+    To   string  `json:"to"`
+	TransactionIndex  string  `json:"transaction"`
+	Value string  `json:"value"`
+}
+
 func HealthCheck(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": "ok"})
 }
@@ -64,4 +80,34 @@ func FetchBlocks(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, blocks)
+}
+
+
+func FetchTransactionDetails(c *gin.Context) {
+	var transactions []TransactionDetails
+	database.ConnectDb()
+
+	db, _ := sql.Open("mysql", "root:@tcp(localhost:3306)/saita")
+	rows, err := db.Query("SELECT hash, from_address, to_address, value, gas_price FROM transaction_details ORDER BY created_at DESC LIMIT 10")
+	if err != nil {
+		log.Printf("Failed to query the database: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to query the database"})
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var transaction TransactionDetails
+
+		err := rows.Scan(&transaction.Hash, &transaction.From, &transaction.To, &transaction.Value, &transaction.GasPrice)
+		if err != nil {
+			log.Printf("Failed to scan row: %v", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve transaction details"})
+			return
+		}
+
+		transactions = append(transactions, transaction)
+	}
+
+	c.JSON(http.StatusOK, transactions)
 }

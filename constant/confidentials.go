@@ -6,5 +6,8 @@ const (
 	Dialect       = "mysql"
 	Database      = "saita"
 	ClientPort    = "8000"
-	BlockChainRpc = "https://rpc-alpha-testnet.saitascan.io"
+	BlockChainRpc = "wss://wss-alpha-testnet.saitascan.io"
+    RabbitMQURL   = "amqp://guest:guest@localhost:5672/"
+
+	// "https://rpc-alpha-testnet.saitascan.io"
 )
