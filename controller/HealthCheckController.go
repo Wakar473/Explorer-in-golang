@@ -18,7 +18,7 @@ type BlockDetails struct {
 	ParentHash   string `json:"parentHash"`
 	BlockHash    string `json:"hash"`
 	Timestamp    string `json:"timestamp"`
-	Transactions int    `json:"transactions"`
+	Transactions string    `json:"transactions"`
 	// HandlerFunc  func(*gin.Context)
 }
 
@@ -88,7 +88,7 @@ func FetchTransactionDetails(c *gin.Context) {
 	database.ConnectDb()
 
 	db, _ := sql.Open("mysql", "root:@tcp(localhost:3306)/saita")
-	rows, err := db.Query("SELECT hash, from_address, to_address, value, gas_price FROM transaction_details ORDER BY created_at DESC LIMIT 10")
+	rows, err := db.Query("SELECT hash, from_address, to_address, value, gas_price FROM transaction_details ORDER BY DESC LIMIT 10")
 	if err != nil {
 		log.Printf("Failed to query the database: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to query the database"})
