@@ -1,0 +1,6 @@
+package constant
+
+const (
+	TestToken = "test"
+	MDBUri    = "localhost:27017"
+)
